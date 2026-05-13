@@ -81,5 +81,3 @@ Il database è **SQLite**, con un massimo di circa **10 tabelle** (ne utilizziam
 | passeggero_id | INTEGER | FK→passeggeri.id, NULL | solo se ruolo='passeggero' |
 
 ---
-
-## 3. Schema ER testuale
