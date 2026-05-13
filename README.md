@@ -8,7 +8,7 @@ Realizzare un sistema informativo per un aeroporto di piccole/medie dimensioni, 
 - **Compagnie aeree**: creare e gestire i propri voli, monitorare l’occupazione.
 - **Operatori aeroportuali**: gestire i gate, supervisionare il traffico aereo, effettuare il check‑in fisico al banco.
 
-Il database è **SQLite**, con un massimo di **10 tabelle** (ne utilizziamo 7, lasciando spazio a futuri ampliamenti).
+Il database è **SQLite**, con un massimo di circa **10 tabelle** (ne utilizziamo 7, lasciando spazio a futuri ampliamenti).
 
 ---
 
