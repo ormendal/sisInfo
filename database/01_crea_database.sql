@@ -11,7 +11,7 @@ CREATE TABLE compagnie_aeree (
 CREATE TABLE gate (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     codice TEXT NOT NULL UNIQUE,
-    stato TEXT NOT NULL CHECK(stato IN ('libero', 'occupato', 'manutenzione'))
+    stato TEXT NOT NULL DEFAULT 'libero' CHECK(stato IN ('libero', 'occupato', 'manutenzione'))
 );
 
 -- 3. VOLI
@@ -25,7 +25,8 @@ CREATE TABLE voli (
     data_ora_partenza DATETIME NOT NULL,
     data_ora_arrivo DATETIME NOT NULL,
     posti_totali INTEGER NOT NULL CHECK(posti_totali > 0),
-    stato TEXT NOT NULL CHECK(stato IN ('programmato', 'partito', 'arrivato')),
+    stato TEXT NOT NULL DEFAULT 'programmato' CHECK(stato IN ('programmato', 'partito', 'arrivato')),
+    CHECK(data_ora_arrivo > data_ora_partenza),
     FOREIGN KEY (compagnia_id) REFERENCES compagnie_aeree(id) ON DELETE CASCADE,
     FOREIGN KEY (gate_id) REFERENCES gate(id) ON DELETE SET NULL
 );
@@ -46,12 +47,26 @@ CREATE TABLE prenotazioni (
     codice_prenotazione TEXT NOT NULL UNIQUE,
     data_prenotazione DATETIME NOT NULL DEFAULT (datetime('now')),
     prezzo REAL NOT NULL CHECK(prezzo >= 0),
-    stato TEXT NOT NULL CHECK(stato IN ('prenotata', 'pagata', 'cancellata', 'imbarcato')),
+    stato TEXT NOT NULL DEFAULT 'prenotata' CHECK(stato IN ('prenotata', 'pagata', 'cancellata', 'imbarcato')),
+    UNIQUE(passeggero_id, volo_id),
     FOREIGN KEY (passeggero_id) REFERENCES passeggeri(id) ON DELETE CASCADE,
     FOREIGN KEY (volo_id) REFERENCES voli(id) ON DELETE CASCADE
 );
 
--- 6. CARTE D'IMBARCO
+-- 6. UTENTI
+-- Definita prima di carte_imbarco perché carte_imbarco la referenzia come operatore_id
+CREATE TABLE utenti (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    ruolo TEXT NOT NULL CHECK(ruolo IN ('admin', 'operatore', 'compagnia', 'passeggero')),
+    compagnia_id INTEGER,
+    passeggero_id INTEGER,
+    FOREIGN KEY (compagnia_id) REFERENCES compagnie_aeree(id) ON DELETE CASCADE,
+    FOREIGN KEY (passeggero_id) REFERENCES passeggeri(id) ON DELETE CASCADE
+);
+
+-- 7. CARTE D'IMBARCO
 CREATE TABLE carte_imbarco (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     prenotazione_id INTEGER NOT NULL UNIQUE,
@@ -62,18 +77,6 @@ CREATE TABLE carte_imbarco (
     FOREIGN KEY (prenotazione_id) REFERENCES prenotazioni(id) ON DELETE CASCADE,
     FOREIGN KEY (gate_imbarco_id) REFERENCES gate(id) ON DELETE SET NULL,
     FOREIGN KEY (operatore_id) REFERENCES utenti(id) ON DELETE SET NULL
-);
-
--- 7. UTENTI
-CREATE TABLE utenti (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    ruolo TEXT NOT NULL CHECK(ruolo IN ('admin', 'operatore', 'compagnia', 'passeggero')),
-    compagnia_id INTEGER,
-    passeggero_id INTEGER,
-    FOREIGN KEY (compagnia_id) REFERENCES compagnie_aeree(id) ON DELETE CASCADE,
-    FOREIGN KEY (passeggero_id) REFERENCES passeggeri(id) ON DELETE CASCADE
 );
 
 -- INDICI
