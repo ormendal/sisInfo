@@ -10,8 +10,8 @@ INSERT INTO compagnie_aeree (id, nome) VALUES
 
 -- 2. GATE
 INSERT INTO gate (id, codice, stato) VALUES
-(1, 'G1', 'libero'),
-(2, 'G2', 'occupato'),
+(1, 'G1', 'occupato'),     -- ha il volo EN1234 (programmato) assegnato
+(2, 'G2', 'occupato'),     -- ha il volo FR5678 (programmato) assegnato
 (3, 'G3', 'manutenzione');
 
 -- 3. VOLI
